@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44050512, g: 0.4891169, b: 0.56926715, a: 1}
+  m_IndirectSpecularColor: {r: 0.44050488, g: 0.4891163, b: 0.5692666, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1327,7 +1327,7 @@ GameObject:
   - component: {fileID: 235917049}
   - component: {fileID: 235917048}
   m_Layer: 0
-  m_Name: BreakCube
+  m_Name: MixCubeSidesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1569,7 +1569,7 @@ GameObject:
   - component: {fileID: 292799020}
   - component: {fileID: 292799019}
   m_Layer: 0
-  m_Name: RotateCube
+  m_Name: RotateCubeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2750,7 +2750,7 @@ GameObject:
   - component: {fileID: 529586737}
   - component: {fileID: 529586736}
   m_Layer: 0
-  m_Name: Table
+  m_Name: TableButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4021,9 +4021,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _text: {fileID: 389928879}
   _collectCube: {fileID: 1555517197}
+  _parent: {fileID: 633457490}
+  _whiteSideMaterial: {fileID: 2100000, guid: 1fd73f0492d012343aa8422e76d58d46, type: 2}
   CubePiecePref: {fileID: 4582053548869487717, guid: 969352c75e2e5a44d88b9daa4ab3b550, type: 3}
   rotationSound: {fileID: 633457491}
-  _parent: {fileID: 633457490}
 --- !u!4 &633457490
 Transform:
   m_ObjectHideFlags: 0
@@ -6664,7 +6665,7 @@ GameObject:
   - component: {fileID: 1003363348}
   - component: {fileID: 1003363347}
   m_Layer: 0
-  m_Name: RightInf
+  m_Name: RightButtons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7820,8 +7821,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1148962005}
   - component: {fileID: 1148962006}
+  - component: {fileID: 1148962007}
   m_Layer: 0
-  m_Name: Buttons
+  m_Name: TopButtons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7874,6 +7876,23 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 1}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &1148962007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148962004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f10904433da46fd9e906d1698b492c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mixCubeSidesButton: {fileID: 235917048}
+  _takeUpCubeButton: {fileID: 1555517198}
+  _tableButton: {fileID: 529586736}
+  _rotateCubeButton: {fileID: 292799019}
+  _cubeManager: {fileID: 633457489}
 --- !u!1 &1150052215
 GameObject:
   m_ObjectHideFlags: 0
@@ -10393,7 +10412,7 @@ GameObject:
   - component: {fileID: 1555517197}
   - component: {fileID: 1555517201}
   m_Layer: 0
-  m_Name: StartCollecting
+  m_Name: TakeUpCubeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -124,12 +124,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc0978bdf38003348861a7eaab31669e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpPlane: {fileID: 191354801115514966}
-  DownPlane: {fileID: 4981484276245906139}
-  FrontPlane: {fileID: 3850870696608610978}
-  BackPlane: {fileID: 7630708773883485244}
-  LeftPlane: {fileID: 4434331833576651316}
-  RightPlane: {fileID: 6838007482412733604}
+  UpPlane: {fileID: 0}
+  DownPlane: {fileID: 0}
+  FrontPlane: {fileID: 0}
+  BackPlane: {fileID: 0}
+  LeftPlane: {fileID: 0}
+  RightPlane: {fileID: 0}
+  _planes:
+  - {fileID: 191354801115514966}
+  - {fileID: 4981484276245906139}
+  - {fileID: 4434331833576651316}
+  - {fileID: 6838007482412733604}
+  - {fileID: 3850870696608610978}
+  - {fileID: 7630708773883485244}
 --- !u!1001 &3344523972848653853
 PrefabInstance:
   m_ObjectHideFlags: 0
