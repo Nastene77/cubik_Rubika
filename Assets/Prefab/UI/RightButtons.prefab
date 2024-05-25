@@ -1058,6 +1058,7 @@ MonoBehaviour:
   _shuffleCubeButton: {fileID: 1761537489545734045}
   _tableButton: {fileID: 4244316557865277806}
   _rotateCubeButton: {fileID: 1061324362700158665}
+  _table: {fileID: 0}
 --- !u!1 &953602083894373146
 GameObject:
   m_ObjectHideFlags: 0

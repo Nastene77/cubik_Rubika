@@ -7,14 +7,15 @@ using Random = UnityEngine.Random;
 
 public class CubeManager : MonoBehaviour
 {
+    public int RotatesCounter { get; set; }
+    public float Timer { get; private set; }
+
     [SerializeField] private CheckStages _checkStages;
     [SerializeField] private TMP_Text _text;
     [SerializeField] private CollectCube _collectCube;
     [SerializeField] private Transform _parent;
 
     private bool isStart = false;
-    private float timer;
-
     public GameObject CubePiecePref;
     List<GameObject> AllCubePieces = new List<GameObject>();
     GameObject CubecenterPieces;
@@ -85,16 +86,16 @@ public class CubeManager : MonoBehaviour
 
         if (isStart && _collectCube.IsRaised)
         {
-            timer += Time.deltaTime;
-            TimeSpan timeSpan = TimeSpan.FromSeconds(timer);
-            _text.text = string.Format("{0:mm\\:ss\\.fff}", timeSpan); ;
+            Timer += Time.deltaTime;
+            TimeSpan timeSpan = TimeSpan.FromSeconds(Timer);
+            _text.text = string.Format("{0:mm\\:ss\\.fff}", timeSpan);
         }
     }
     public void StartTimer()
     {
         isStart = true;
-        timer = 0f;
-        _text.text = timer.ToString();
+        Timer = 0f;
+        _text.text = Timer.ToString();
     }
 
     public void RotateCube() => transform.RotateAround(CubecenterPieces.transform.position, new Vector3(0,0,1), 180);
@@ -185,6 +186,8 @@ public class CubeManager : MonoBehaviour
 
     private IEnumerator Rotate(List<GameObject> pieces, Vector3 rotationVec, int speed = 5)
     {
+        if (speed == 5) RotatesCounter += 1;
+
         canRotate = false;
         int angle = 0;
 

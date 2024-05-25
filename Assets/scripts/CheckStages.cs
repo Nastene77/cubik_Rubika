@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CheckStages : MonoBehaviour
 {
+    public event Action FirstStageCompleted;
+    public event Action SeventhStageCompleted;
+
     [SerializeField] private Material _whiteSideMaterial;
 
     private Vector3[] _firstStageVectors =
@@ -21,15 +25,21 @@ public class CheckStages : MonoBehaviour
             IsSeventhStageComplete(rightPieces) &&
             IsSeventhStageComplete(frontPieces) &&
             IsSeventhStageComplete(backPieces))
+        {
+            SeventhStageCompleted?.Invoke();
             Debug.Log("Seventh Stage Completed");
+        }
 
-        // if (IsWhiteCrossCompleted(upPieces) ||
-        //     IsWhiteCrossCompleted(downPieces) ||
-        //     IsWhiteCrossCompleted(leftPieces) ||
-        //     IsWhiteCrossCompleted(rightPieces) ||
-        //     IsWhiteCrossCompleted(frontPieces) ||
-        //     IsWhiteCrossCompleted(backPieces))
-        //     Debug.Log("First Stage Completed");
+        if (IsWhiteCrossCompleted(upPieces) ||
+            IsWhiteCrossCompleted(downPieces) ||
+            IsWhiteCrossCompleted(leftPieces) ||
+            IsWhiteCrossCompleted(rightPieces) ||
+            IsWhiteCrossCompleted(frontPieces) ||
+            IsWhiteCrossCompleted(backPieces))
+        {
+            FirstStageCompleted?.Invoke();
+            Debug.Log("First Stage Completed");
+        }
     }
 
     private bool IsSeventhStageComplete(List<GameObject> pieces)
@@ -79,18 +89,18 @@ public class CheckStages : MonoBehaviour
                 return false;
             }
 
-            // Проверяем, лежат ли два кубика в одной гране
-            if (AreCubesOnSameFace(centerPiece, cubePiece.GetComponent<CubePieceScr>().Planes[centerPlaneIndex]))
-            {
-                // Debug.Log("Кубики лежат в одной гране!");
-                // return true;
-            }
-            else
-            {
-                Debug.Log($"Rotation is not constructed");
-                // Debug.Log("Кубики не лежат в одной гране!");
-                return false;
-            }
+            // // Проверяем, лежат ли два кубика в одной гране
+            // if (AreCubesOnSameFace(centerPiece, cubePiece.GetComponent<CubePieceScr>().Planes[centerPlaneIndex]))
+            // {
+            //     // Debug.Log("Кубики лежат в одной гране!");
+            //     // return true;
+            // }
+            // else
+            // {
+            //     Debug.Log($"Rotation is not constructed");
+            //     // Debug.Log("Кубики не лежат в одной гране!");
+            //     return false;
+            // }
         }
 
         return true;
