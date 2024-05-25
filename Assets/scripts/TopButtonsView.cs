@@ -3,21 +3,34 @@ using UnityEngine.UI;
 
 public class TopButtonsView : MonoBehaviour
 {
-    [SerializeField] private Button _mixCubeSidesButton;
-    [SerializeField] private Button _takeUpCubeButton;
+    [SerializeField] private CubeManager _cubeManager;
+
+    [Header("UI")]
+    [SerializeField] private Button _shuffleCubeButton;
     [SerializeField] private Button _tableButton;
     [SerializeField] private Button _rotateCubeButton;
-    [SerializeField] private CubeManager _cubeManager;
+
+    [SerializeField] private GameObject _table;
+
     private void Awake()
     {
-        // _mixCubeSidesButton.onClick.AddListener();
-        // _takeUpCubeButton.onClick.AddListener();
-        // _tableButton.onClick.AddListener();
+        _shuffleCubeButton.onClick.AddListener(OnShuffleCubeButtonClicked);
+        _tableButton.onClick.AddListener(OnTableButtonClicked);
         _rotateCubeButton.onClick.AddListener(OnRotateCubeButtonClicked);
     }
 
     private void OnRotateCubeButtonClicked()
     {
         _cubeManager.RotateCube();
+    }
+
+    private void OnTableButtonClicked()
+    {
+        _table.SetActive(!_table.gameObject.activeSelf);
+    }
+
+    private void OnShuffleCubeButtonClicked()
+    {
+        _cubeManager.ShuffleCube();
     }
 }

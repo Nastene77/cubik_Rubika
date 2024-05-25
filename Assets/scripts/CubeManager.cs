@@ -1,17 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CubeManager : MonoBehaviour
 {
+    [SerializeField] private CheckStages _checkStages;
     [SerializeField] private TMP_Text _text;
     [SerializeField] private CollectCube _collectCube;
     [SerializeField] private Transform _parent;
-    [SerializeField] private Material _whiteSideMaterial;
 
     private bool isStart = false;
     private float timer;
@@ -20,6 +19,7 @@ public class CubeManager : MonoBehaviour
     List<GameObject> AllCubePieces = new List<GameObject>();
     GameObject CubecenterPieces;
     bool canRotate = true;
+    private bool _canShuffle = true;
 
     public AudioSource rotationSound;
 
@@ -66,12 +66,19 @@ public class CubeManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private Vector3[] RotationVectors =
+    {
+        new Vector3(0, 1, 0), new Vector3(0, -1, 0),
+        new Vector3(0, 0, -1), new Vector3(0, 0, 1),
+        new Vector3(1, 0, 0), new Vector3(-1, 0, 0)
+    };
+
+    private void Start()
     {
         CreateCube();
     }
 
-    void Update()
+    private void Update()
     {
         if (canRotate) 
         CheckInput();
@@ -90,12 +97,15 @@ public class CubeManager : MonoBehaviour
         _text.text = timer.ToString();
     }
 
-    public void RotateCube()
+    public void RotateCube() => transform.RotateAround(CubecenterPieces.transform.position, new Vector3(0,0,1), 180);
+
+    public void ShuffleCube()
     {
-        transform.RotateAround(CubecenterPieces.transform.position, new Vector3(0,0,1), 180);
+        if (!_canShuffle) return;
+        StartCoroutine(Shuffle());
     }
 
-    void CreateCube()
+    private void CreateCube()
     {
         for (int x = 0; x < 3; x++)
             for (int y = 0; y < 3; y++)
@@ -109,10 +119,9 @@ public class CubeManager : MonoBehaviour
         CubecenterPieces = AllCubePieces[13];
     }
 
-    void CheckInput()
+    private void CheckInput()
     {
-        if (!_collectCube.IsRaised)
-            return;
+        if (!_collectCube.IsRaised || !_canShuffle) return;
 
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.W) ||
             Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.B))
@@ -174,7 +183,7 @@ public class CubeManager : MonoBehaviour
 
     }
 
-    IEnumerator Rotate(List<GameObject> pieces, Vector3 rotationVec)
+    private IEnumerator Rotate(List<GameObject> pieces, Vector3 rotationVec, int speed = 5)
     {
         canRotate = false;
         int angle = 0;
@@ -182,13 +191,48 @@ public class CubeManager : MonoBehaviour
         while(angle < 90)
         {
             foreach (GameObject go in pieces) 
-                go.transform.RotateAround(CubecenterPieces.transform.position, rotationVec, 5);
-            angle += 5;
+                go.transform.RotateAround(CubecenterPieces.transform.position, rotationVec, speed);
+            angle += speed;
             yield return null;
         }
         canRotate = true;
-        CheckFirstStageComplete();
-        CheckComplete();
+        _checkStages.CheckStagesComplete(UpPieces, DownPieces, LeftPieces, RightPieces, FrontPieces, BackPieces);
+    }
+
+    private IEnumerator Shuffle()
+    {
+        _canShuffle = false;
+        for (int moveCount = 10; moveCount >= 0; moveCount--)
+        {
+            int edge = Random.Range(0, 6);
+            List<GameObject> edgePieces = new List<GameObject>();
+            switch (edge)
+            {
+                case 0:
+                    edgePieces = UpPieces;
+                    break;
+                case 1:
+                    edgePieces = DownPieces;
+                    break;
+                case 2:
+                    edgePieces = LeftPieces;
+                    break;
+                case 3:
+                    edgePieces = RightPieces;
+                    break;
+                case 4:
+                    edgePieces = FrontPieces;
+                    break;
+                case 5:
+                    edgePieces = BackPieces;
+                    break;
+            }
+            
+            StartCoroutine(Rotate(edgePieces, RotationVectors[edge], 15)); 
+            yield return new WaitForSeconds(.3f);
+        }
+        
+        _canShuffle = true;
     }
 
     void PlayRotationSound()
@@ -197,86 +241,8 @@ public class CubeManager : MonoBehaviour
             rotationSound.Play();
     }
 
-    private void CheckComplete()
-    {
-        if (IsSideComplete(UpPieces) &&
-            IsSideComplete(DownPieces) &&
-            IsSideComplete(LeftPieces) &&
-            IsSideComplete(RightPieces) &&
-            IsSideComplete(FrontPieces) &&
-            IsSideComplete(BackPieces)) 
-            Debug.Log("Seventh Stage Completed");
-    }
-
-    private void CheckFirstStageComplete()
-    {
-        if (IsWhiteCrossCompleted(UpPieces) ||
-            IsWhiteCrossCompleted(DownPieces) ||
-            IsWhiteCrossCompleted(LeftPieces) ||
-            IsWhiteCrossCompleted(RightPieces) ||
-            IsWhiteCrossCompleted(FrontPieces) ||
-            IsWhiteCrossCompleted(BackPieces)) 
-            Debug.Log("First Stage Completed");
-    }
-
-    private bool IsWhiteCrossCompleted(List<GameObject> pieces)
-    {
-        int centerPlaneIndex = pieces[4].GetComponent<CubePieceScr>().Planes.FindIndex(x => x.activeInHierarchy);
-        Color centerPlaneColor = pieces[4].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color;
-        if (_whiteSideMaterial.color != centerPlaneColor)
-        {
-            Debug.Log($"Not white center plane");
-            return false;
-        }
-        // for (int i = 0; i < pieces.Count; i++)
-        // {
-        //     GameObject currentPiecePlane = pieces[i].GetComponent<CubePieceScr>().Planes[centerPlaneIndex];
-        //     if (!currentPiecePlane.activeInHierarchy)
-        //     {
-        //         Debug.Log($"Center plane is not active");
-        //         return false;
-        //     }
-        // }
-        if (!(pieces[1].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].activeInHierarchy &&
-            pieces[3].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].activeInHierarchy &&
-            pieces[4].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].activeInHierarchy &&
-            pieces[5].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].activeInHierarchy &&
-            pieces[7].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].activeInHierarchy))
-        {
-            Debug.Log($"Center plane is not active");
-            return false;
-        }
-        if (pieces[1].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color == _whiteSideMaterial.color &&
-            pieces[3].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color == _whiteSideMaterial.color &&
-            pieces[4].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color == _whiteSideMaterial.color &&
-            pieces[5].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color == _whiteSideMaterial.color &&
-            pieces[7].GetComponent<CubePieceScr>().Planes[centerPlaneIndex].GetComponent<Renderer>().material.color == _whiteSideMaterial.color)
-        {
-            return true;
-        }
-        else
-        {
-            Debug.Log($"Cross is not constructed");
-            return false;
-        }
-    }
-
-    private bool IsSideComplete(List<GameObject> pieces)
-    {
-        int mainPlaneIndex = pieces[4].GetComponent<CubePieceScr>().Planes.FindIndex(x => x.activeInHierarchy);
-        for (int i = 0; i < pieces.Count; i++)
-        {
-            if (!pieces[i].GetComponent<CubePieceScr>().Planes[mainPlaneIndex].activeInHierarchy ||
-                pieces[i].GetComponent<CubePieceScr>().Planes[mainPlaneIndex].GetComponent<Renderer>().material.color !=
-                pieces[4].GetComponent<CubePieceScr>().Planes[mainPlaneIndex].GetComponent<Renderer>().material.color)
-                return false;
-        }
-        return true;
-    }
-
     public void StopTimer()
     {
         isStart = false;
     }
 }
-

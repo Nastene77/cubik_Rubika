@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CameraRotation : MonoBehaviour
 {
+    public bool IsRotationEnabled { get; set; }
+
     [SerializeField] private Transform targetPos; //целевая позиция
     [SerializeField] private int sensivity = 3; //чувствительность для вращения и движения
     [SerializeField] private float scrollSpeed = 1f; //скорость прокрутки колеса мыши для изменения приближения.
@@ -10,6 +12,8 @@ public class CameraRotation : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!IsRotationEnabled) return;
+
         //ВРАЩЕНИЕ ВОКРУГ ЦЕНТРАЛЬНОЙ ТОЧКИ УСТАНОВКИ С ЗАЖАТОЙ ПРАВОЙ КЛАВИШИ МЫШИ
         if (Input.GetMouseButton(1))
         {
